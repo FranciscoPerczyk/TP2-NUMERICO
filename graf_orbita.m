@@ -54,7 +54,11 @@ plot(x_tierra,y_tierra,'k-','LineWidth',4);
 plot(x_luna,y_luna,'b-','LineWidth',4); 
 
 %Grafico orbita
+<<<<<<< HEAD
+plot(x_orbita,y_orbita,'-r','linewidth',3);
+=======
 plot(x_orbita,y_orbita,'-b','linewidth',3);
+>>>>>>> 167d623503cfb771f814cb6bf586de02238ba3fc
 
 %Limites de los ejes para que las circunferencias no se deformen y se vea completa
 %la orbita
