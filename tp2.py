@@ -1,5 +1,7 @@
 import numpy as np
 from decimal import Decimal
+import math as mt
+
 XT = -4.670E6
 YT = 0
 X2 = 379.7E6
@@ -12,7 +14,7 @@ W = 0 #(4.236E-7)**2
 def main():
 
 	x0 = input("Ingrese x0:")
-	if (not x0): x0 = -110401000
+	if (not x0): x0 = -12003000
 	y0 = input("Ingrese y0:")
 	if (not y0): y0 = 	0
 	vx0 = input("Ingrese vx0:")
@@ -32,17 +34,17 @@ def euler(x0, y0, vx0, vy0, h):
 	archivo = open('posiciones.txt', 'w')
 	Rn = np.array([vx0, vy0, x0, y0])
 	F = euler_F(Rn)
-	for i in range(100000):
+	for i in range(1000000):
 		escribir_posicion(archivo, Rn[2:])
 		Rn = np.add(Rn, np.multiply(h, euler_F(Rn)))
 	archivo.close()
 
 
 def euler_Fvx(x, y):
-	return G*M1*np.cos(a1(x, y))/d1(x, y) + G*M2*np.cos(a2(x,y))/d2(x,y) + W*dg(x,y)*np.cos(a3(x,y))
+	return ((G*M1*np.cos(a1(x, y)))/d1(x, y)) + ((G*M2*np.cos(a2(x,y)))/d2(x,y)) + (W*dg(x,y)*np.cos(a3(x,y)))
 
 def euler_Fvy(x, y):
-	return G*M1*np.sin(a1(x, y))/d1(x, y) + G*M2*np.sin(a2(x,y))/d2(x,y) + W*dg(x,y)*np.sin(a3(x,y))
+	return ((G*M1*np.sin(a1(x, y)))/d1(x, y)) + ((G*M2*np.sin(a2(x,y)))/d2(x,y)) + (W*dg(x,y)*np.sin(a3(x,y)))
 
 def euler_F(Rn):
 	vx = Rn[0]
@@ -52,15 +54,15 @@ def euler_F(Rn):
 	return np.array([euler_Fvx(x, y), euler_Fvy(x,y), vx, vy])
 
 def a1(x, y):
-	return np.arctan((YT - y)/(XT - x))
+	return np.arctan2((YT - y),(XT - x))
 
 
 def a2(x, y):
-	return np.arctan((Y2 - y)/(X2 - x))
+	return np.arctan2((Y2 - y),(X2 - x))
 
 
 def a3(x, y):
-	return np.arctan(y/x)
+	return np.arctan2(y,x)
 
 
 def d1(x, y):
