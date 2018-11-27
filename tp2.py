@@ -24,17 +24,30 @@ def main():
     if (not h): h = 0.1
     cant_iter = input('Ingrese cantidad de iteraciones:')
     runge_kutta(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
+    euler(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
+
+
+def escribir_par(archivo, v):
+    archivo.write("{:.4E},{:.4E} \n".format(Decimal(v[0]), Decimal(v[1])))
+
+
+def output_e(R0, Rn, f):
+    escribir_par(f, calcular_variacion_e(R0, Rn))
 
 
 def runge_kutta(x0, y0, vx0, vy0, h, cant_iter):
-    archivo = open('posiciones.txt', 'w')
+    archivo = open('posiciones_rk.txt', 'w')
+    archivoe = open('emecanica_rk.txt', 'w')
     Rn = np.array([vx0, vy0, x0, y0])
     # Rq1 = np.array([q1vx(x0, y0, h)], q1vy(x0, y0, h), q1x(x0, y0, h), q1y(x0, y0, h))
     # Rq2 = np.array([q2vx(x0, y0, h, Rq1), q2vy(x0, y0, h, Rq1), q2x(x0, y0, h, Rq1), q2y(x0, y0, h, Rq1)])
+    R0 = Rn.copy()
     for i in range(cant_iter):
-        escribir_posicion(archivo, Rn[2:])
+        escribir_par(archivo, Rn[2:])
         Rn = np.add(Rn, np.multiply(0.5, cal_Rq(Rn, h)))
+    output_e(R0, Rn, archivoe)
     archivo.close()
+    archivoe.close()
 
 
 def cal_Rq(Rn, h):
@@ -53,17 +66,17 @@ def cal_Rq2(Rn, Rq1, h):
          h * Rn[1]])
 
 
-def escribir_posicion(archivo, v):
-    archivo.write("{:.4E},{:.4E} \n".format(Decimal(v[0]), Decimal(v[1])))
-
-
 def euler(x0, y0, vx0, vy0, h, cant_iter):
-    archivo = open('posiciones.txt', 'w')
+    archivo = open('posiciones_euler.txt', 'w')
+    archivoe = open('emecanica_euler.txt', 'w')
     Rn = np.array([vx0, vy0, x0, y0])
+    R0 = Rn.copy()
     for i in range(cant_iter):
-        escribir_posicion(archivo, Rn[2:])
+        escribir_par(archivo, Rn[2:])
         Rn = np.add(Rn, np.multiply(h, euler_F(Rn)))
+    output_e(R0, Rn, archivoe)
     archivo.close()
+    archivoe.close()
 
 
 def euler_Fvx(x, y):
@@ -107,5 +120,23 @@ def d2(x, y):
 def dg(x, y):
     return np.sqrt(x ** 2 + y ** 2)
 
+
+# Energia -------------------------
+def e_cinetica(v):
+    return v ** 2 / 2
+
+
+def e_potencial(x, y):
+    return -G * (M1 / d1(x, y) - M2 / d2(x, y))
+
+
+def calcular_variacion_e(R0, R1):
+    v0x, v0y, x0, y0 = (i for i in R0)
+    v1x, v1y, x1, y1 = (i for i in R1)
+    v_inicial = np.array([v0x, v0y])
+    v_final = np.array([v1x, v1y])
+    e_mecanica_inicial = e_cinetica(np.linalg.norm(v_inicial)) + e_potencial(x0, y0)
+    e_mecanica_final = e_cinetica(np.linalg.norm(v_final)) + e_potencial(x1, y1)
+    return e_mecanica_inicial, e_mecanica_final
 
 main()
