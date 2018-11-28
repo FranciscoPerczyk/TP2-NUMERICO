@@ -7,8 +7,8 @@ X2 = 379.7E6
 Y2 = 0
 G = 6.674E-11
 M1 = 5972E21
-M2 = 73.48E21
-W = 4.236E-7 ** 2
+M2 = 0#73.48E21
+W = 0#4.236E-7 ** 2
 R_TIERRA = 6.731E6 + 0.602E6
 V_TIERRA = np.sqrt(G*M1/R_TIERRA)
 
@@ -24,7 +24,7 @@ def main():
 	cant_iter = input('Ingrese cantidad de iteraciones:')
 	if (not cant_iter): cant_iter = 100000
 
-	#runge_kutta(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
+	runge_kutta(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
 	euler(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
 
 
@@ -35,10 +35,10 @@ def escribir_d(archivo, d):
 	archivo.write("{:.4E},\n".format(float(d)))
 
 
-def output_e(t,R, f):	
+def output_e(t, R, f):	
 	e_cin = e_cinetica(R)
 	e_pot = e_potencial(R)
-	f.write("{},{},{},{}\n".format(float(e_cin),float(e_pot),float(e_cin+e_pot),float (t)))
+	f.write("{}, {},{},{}\n".format(float(e_cin),float(e_pot),float(e_cin+e_pot),float(t)))
 
 def runge_kutta(x0, y0, vx0, vy0, h, cant_iter):
 	archivo = open('posiciones_rk.txt', 'w')
@@ -47,10 +47,10 @@ def runge_kutta(x0, y0, vx0, vy0, h, cant_iter):
 	Rn = np.array([vx0, vy0, x0, y0])
 	for i in range(cant_iter):
 		escribir_d(archivod, d1(Rn[2], Rn[3]))
-		output_e(h*i,Rn, archivoe)
+		output_e(h*i, Rn, archivoe)
 		escribir_par(archivo, Rn[2:])
 		Rn = np.add(Rn, np.multiply(0.5, cal_Rq(Rn, h)))
-	output_e(h*i,Rn, archivoe)
+	output_e(h*i, Rn, archivoe)
 	archivo.close()
 	archivoe.close()
 
@@ -58,7 +58,7 @@ def runge_kutta(x0, y0, vx0, vy0, h, cant_iter):
 def cal_Rq(Rn, h):
 	Rq1 = cal_Rq1(Rn, h)
 	Rn = Rn + Rq1
-	Rq2 = cal_Rq2(Rn, Rq1, h)
+	Rq2 = cal_Rq1(Rn, h)
 	Rn = Rn - Rq1
 	return np.add(Rq1, Rq2)
 
@@ -81,10 +81,10 @@ def euler(x0, y0, vx0, vy0, h, cant_iter):
 	R0 = Rn.copy()
 	for i in range(cant_iter):
 		escribir_d(archivod, d1(Rn[2], Rn[3]))
-		output_e(h*i,Rn, archivoe)
+		output_e(h*i, Rn, archivoe)
 		escribir_par(archivo, Rn[2:])
 		Rn = np.add(Rn, np.multiply(h, euler_F(Rn)))
-	output_e(h*i,Rn, archivoe)
+	output_e(h*i, Rn, archivoe)
 	archivo.close()
 	archivoe.close()
 
