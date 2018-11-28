@@ -24,8 +24,8 @@ def main():
 	cant_iter = input('Ingrese cantidad de iteraciones:')
 	if (not cant_iter): cant_iter = 100000
 
-	runge_kutta(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
-	#euler(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
+	#runge_kutta(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
+	euler(float(x0), float(y0), float(vx0), float(vy0), float(h), int(cant_iter))
 
 
 def escribir_par(archivo, v):
@@ -35,10 +35,10 @@ def escribir_d(archivo, d):
 	archivo.write("{:.4E},\n".format(float(d)))
 
 
-def output_e(R, f):	
+def output_e(t,R, f):	
 	e_cin = e_cinetica(R)
 	e_pot = e_potencial(R)
-	f.write("{},{},{}\n".format(float(e_cin),float(e_pot),float(e_cin+e_pot)))
+	f.write("{},{},{},{}\n".format(float(e_cin),float(e_pot),float(e_cin+e_pot),float (t)))
 
 def runge_kutta(x0, y0, vx0, vy0, h, cant_iter):
 	archivo = open('posiciones_rk.txt', 'w')
@@ -47,10 +47,10 @@ def runge_kutta(x0, y0, vx0, vy0, h, cant_iter):
 	Rn = np.array([vx0, vy0, x0, y0])
 	for i in range(cant_iter):
 		escribir_d(archivod, d1(Rn[2], Rn[3]))
-		output_e(Rn, archivoe)
+		output_e(h*i,Rn, archivoe)
 		escribir_par(archivo, Rn[2:])
 		Rn = np.add(Rn, np.multiply(0.5, cal_Rq(Rn, h)))
-	output_e(Rn, archivoe)
+	output_e(h*i,Rn, archivoe)
 	archivo.close()
 	archivoe.close()
 
@@ -81,10 +81,10 @@ def euler(x0, y0, vx0, vy0, h, cant_iter):
 	R0 = Rn.copy()
 	for i in range(cant_iter):
 		escribir_d(archivod, d1(Rn[2], Rn[3]))
-		output_e(Rn, archivoe)
+		output_e(h*i,Rn, archivoe)
 		escribir_par(archivo, Rn[2:])
 		Rn = np.add(Rn, np.multiply(h, euler_F(Rn)))
-	output_e(Rn, archivoe)
+	output_e(h*i,Rn, archivoe)
 	archivo.close()
 	archivoe.close()
 
